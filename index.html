@@ -1241,6 +1241,19 @@ footer {
   cursor: pointer;
 }
 
+.menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,27,42,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+}
+.menu-overlay.open { display: block; }
+
+/* Keep .nav-links.open above overlay */
+.nav-links.open { z-index: 999; }
+
 /* ─── RESPONSIVE ─── */
 @media (max-width: 1024px) {
   .hero-content, .about-inner, .book-inner, .why-layout {
@@ -1328,6 +1341,70 @@ footer {
   display: none;
 }
 .nav-links.open ~ .nav-close { display: block; }
+
+/* ─── CAROUSEL ─── */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  margin-top: 40px;
+  padding-bottom: 40px;
+}
+.carousel-track {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 20px;
+  padding: 10px 4px 20px;
+  -webkit-overflow-scrolling: touch;
+}
+.carousel-track::-webkit-scrollbar { display: none; }
+.testimonial-card {
+  flex: 0 0 auto;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  scroll-snap-align: start;
+  margin: 0 6px;
+}
+/* Buttons */
+.carousel-btn {
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  background: var(--white);
+  color: var(--navy);
+  border: none;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 5;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.carousel-btn:hover { background: var(--gold); color: var(--navy); }
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+@media (max-width: 640px) {
+  .carousel-btn { width: 32px; height: 32px; font-size: 16px; }
+}
+.carousel-dots {
+  text-align: center;
+  margin-top: 16px;
+}
+.carousel-dots .dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--cream-dark);
+  border-radius: 50%;
+  margin: 0 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.carousel-dots .dot.active { background: var(--teal); }
+
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -1351,6 +1428,7 @@ footer {
     <li><a href="#book" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="nav-mobile-toggle" onclick="toggleMenu()" id="menuToggle">☰</button>
+  <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
 </nav>
 <button class="nav-close" id="navClose" onclick="toggleMenu()">✕</button>
 
@@ -1611,62 +1689,52 @@ footer {
       <p class="section-label" style="justify-content:center;">Patient Stories</p>
       <h2 class="section-title" style="color:var(--white);">What Our <em>Patients</em> Say</h2>
     </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card reveal reveal-delay-1">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Dr. Moloi is kind, patient, and always explains things clearly. My whole family has been coming here for years. We wouldn't trust anyone else."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">NK</div>
-          <div>
-            <div class="author-name">N. Khumalo</div>
-            <div class="author-detail">Patient for 8 years</div>
+    <div class="carousel-container reveal reveal-delay-1">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Dr. Moloi is kind, patient, and always explains things clearly. My whole family has been coming here for years. We wouldn't trust anyone else."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">NK</div>
+            <div><div class="author-name">N. Khumalo</div><div class="author-detail">Patient for 8 years</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"When I was diagnosed with diabetes, I was terrified. Dr. Moloi sat with me for an hour. He explained everything. I left feeling hope, not fear."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">TD</div>
+            <div><div class="author-name">T. Dlamini</div><div class="author-detail">Chronic care patient</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"The practice is clean, the staff are warm, and the doctor actually remembers your name. That means everything. This is healthcare done right."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SM</div>
+            <div><div class="author-name">S. Mahlangu</div><div class="author-detail">Patient for 3 years</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"I brought my mom here after struggling with another clinic. The difference was night and day. Professional, thorough, and genuinely caring."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">KM</div>
+            <div><div class="author-name">K. Mokoena</div><div class="author-detail">Referred patient</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p class="testimonial-quote">"Booked same morning, seen by midday. Results ready before I left. I've never experienced anything like it. Dr. Moloi's practice is a gem in Soweto."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">PS</div>
+            <div><div class="author-name">P. Sithole</div><div class="author-detail">New patient</div></div>
           </div>
         </div>
       </div>
-      <div class="testimonial-card reveal reveal-delay-2">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"When I was diagnosed with diabetes, I was terrified. Dr. Moloi sat with me for an hour. He explained everything. I left feeling hope, not fear."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">👨🏿</div>
-          <div>
-            <div class="author-name">T. Dlamini</div>
-            <div class="author-detail">Chronic care patient</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal reveal-delay-3">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"The practice is clean, the staff are warm, and the doctor actually remembers your name. That means everything. This is healthcare done right."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">SM</div>
-          <div>
-            <div class="author-name">S. Mahlangu</div>
-            <div class="author-detail">Patient for 3 years</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal reveal-delay-1">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"I brought my mom here after struggling with another clinic. The difference was night and day. Professional, thorough, and genuinely caring."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">👨🏾</div>
-          <div>
-            <div class="author-name">K. Mokoena</div>
-            <div class="author-detail">Referred patient</div>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal reveal-delay-2" style="grid-column: span 2;">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-quote">"Booked same morning, seen by midday. Results ready before I left. I've never experienced anything like it. Dr. Moloi's practice is a gem in Soweto."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">👩🏿</div>
-          <div>
-            <div class="author-name">P. Sithole</div>
-            <div class="author-detail">New patient</div>
-          </div>
-        </div>
-      </div>
+      <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+      <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
   </div>
 </section>
@@ -2049,11 +2117,22 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 reveals.forEach(el => observer.observe(el));
 
+const navLinks = document.getElementById('navLinks');
+const overlay = document.getElementById('menuOverlay');
+
 // Mobile menu
 function toggleMenu() {
-  const links = document.getElementById('navLinks');
-  links.classList.toggle('open');
+  const isOpen = navLinks.classList.toggle('open');
+  overlay.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
 }
+
+// Close menu on link click
+navLinks.querySelectorAll('a[href]').forEach(link => {
+  link.addEventListener('click', () => {
+    if (navLinks.classList.contains('open')) toggleMenu();
+  });
+});
 
 // Modal
 function openModal() {
@@ -2117,6 +2196,70 @@ function animateNumber(el, target, suffix) {
     el.textContent = Math.floor(start) + suffix;
   }, 16);
 }
+
+// ─── Carousel logic ───
+const track = document.getElementById('carouselTrack');
+const cards = track.querySelectorAll('.testimonial-card');
+const dotsContainer = document.getElementById('carouselDots');
+let currentIndex = 0;
+let autoTimer;
+
+// Create dots
+cards.forEach((_, i) => {
+  const dot = document.createElement('span');
+  dot.className = 'dot';
+  dot.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(dot);
+});
+const dots = dotsContainer.querySelectorAll('.dot');
+updateDots();
+
+function moveCarousel(dir) {
+  const max = cards.length - 1;
+  currentIndex = Math.min(Math.max(currentIndex + dir, 0), max);
+  goTo(currentIndex);
+}
+
+function goTo(index) {
+  currentIndex = index;
+  track.scrollTo({ left: cards[index].offsetLeft - track.offsetLeft, behavior: 'smooth' });
+  updateDots();
+  resetAuto();
+}
+
+function updateDots() {
+  dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+}
+
+function autoPlay() {
+  autoTimer = setInterval(() => {
+    currentIndex = (currentIndex + 1) % cards.length;
+    goTo(currentIndex);
+  }, 4000);
+}
+function resetAuto() {
+  clearInterval(autoTimer);
+  autoPlay();
+}
+
+// Update index on scroll (touch swipe)
+track.addEventListener('scroll', () => {
+  let closest = 0;
+  let minDist = Infinity;
+  cards.forEach((card, i) => {
+    const dist = Math.abs(card.offsetLeft - track.offsetLeft - track.scrollLeft);
+    if (dist < minDist) { minDist = dist; closest = i; }
+  });
+  if (closest !== currentIndex) {
+    currentIndex = closest;
+    updateDots();
+    resetAuto();
+  }
+});
+
+// Start auto
+autoPlay();
+
 </script>
 </body>
 </html>
